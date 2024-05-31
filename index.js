@@ -13,6 +13,10 @@ const PORT = process.env.PORT || 3002;
 // Secret key for JWT
 const secret = 'Fullstack-login-project';
 
+app.listen(PORT, () => {
+    console.log(`Server running on PORT : ${PORT}`);
+});
+
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -711,6 +715,4 @@ const tables = [
 // Create routes for each table
 tables.forEach(createRoutesForTable);
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+module.exports = app
