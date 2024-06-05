@@ -24,6 +24,19 @@ app.get('/test', (req, res) => {
     res.send('Hello brother !');
 });
 
+app.get('/tables', async (req, res) => {
+    try {
+      const connection = await mysql.createConnection(connectionConfig);
+      const [tables] = await connection.execute('SHOW TABLES');
+  
+      const tableNames = tables.map(table => table.Tables_in_machine_record);
+      res.json(tableNames);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error retrieving tables');
+    }
+  });
+
 // Registration endpoint
 app.post('/api/register', async (req, res) => {
     const { username, email, password } = req.body; // Add username to the destructuring
