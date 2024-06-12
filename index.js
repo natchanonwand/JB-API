@@ -407,11 +407,11 @@ app.get('/api/air_flow', async (req, res) => {
 
 // Add a new record to Air_Flow
 app.post('/api/air_flow', async (req, res) => {
-    const { machine_name, record_date, record_time, status, valve_percentage, note } = req.body;
+    const { machine_name, record_date, record_time, Flow, valve_percentage, note } = req.body;
 
     try {
         const query = 'INSERT INTO Air_Flow (machine_name, record_date, record_time, Flow, valve_percentage, note) VALUES (?, ?, ?, ?, ?, ?)';
-        await promisePool.execute(query, [machine_name, record_date, record_time, status, valve_percentage, note]);
+        await promisePool.execute(query, [machine_name, record_date, record_time, Flow, valve_percentage, note]);
         res.status(201).json({ message: 'Record added successfully to Air_Flow' });
     } catch (error) {
         console.error('Error adding record to Air_Flow:', error);
@@ -422,11 +422,11 @@ app.post('/api/air_flow', async (req, res) => {
 // Update an existing record in Air_Flow
 app.put('/api/air_flow/:id', async (req, res) => {
     const { id } = req.params;
-    const { machine_name, record_date, record_time, status, valve_percentage, note } = req.body;
+    const { machine_name, record_date, record_time, Flow, valve_percentage, note } = req.body;
 
     try {
-        const query = 'UPDATE Air_Flow SET machine_name = ?, record_date = ?, record_time = ?, status = ?, valve_percentage = ?, note=? WHERE record_id = ?';
-        await promisePool.execute(query, [machine_name, record_date, record_time, status, valve_percentage, note, id]);
+        const query = 'UPDATE Air_Flow SET machine_name = ?, record_date = ?, record_time = ?, Flow = ?, valve_percentage = ?, note=? WHERE record_id = ?';
+        await promisePool.execute(query, [machine_name, record_date, record_time, Flow, valve_percentage, note, id]);
         res.status(200).json({ message: 'Record updated successfully in Air_Flow' });
     } catch (error) {
         console.error('Error updating record in Air_Flow:', error);
