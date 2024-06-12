@@ -410,7 +410,7 @@ app.post('/api/air_flow', async (req, res) => {
     const { machine_name, record_date, record_time, status, valve_percentage, note } = req.body;
 
     try {
-        const query = 'INSERT INTO Air_Flow (machine_name, record_date, record_time, status, valve_percentage, note) VALUES (?, ?, ?, ?, ?, ?)';
+        const query = 'INSERT INTO Air_Flow (machine_name, record_date, record_time, Flow, valve_percentage, note) VALUES (?, ?, ?, ?, ?, ?)';
         await promisePool.execute(query, [machine_name, record_date, record_time, status, valve_percentage, note]);
         res.status(201).json({ message: 'Record added successfully to Air_Flow' });
     } catch (error) {
