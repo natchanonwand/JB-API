@@ -519,9 +519,17 @@ app.put('/api/garden_pump/:id', async (req, res) => {
 
 // Get all records from Chiller
 app.get('/api/chiller', async (req, res) => {
+    const machineName = req.query.machine_name;
+    let query = 'SELECT * FROM Chiller';
+    const queryParams = [];
+
+    if (machineName) {
+        query += ' WHERE machine_name = ?';
+        queryParams.push(machineName);
+    }
+
     try {
-        const query = 'SELECT * FROM Chiller';
-        const [records] = await promisePool.execute(query);
+        const [records] = await promisePool.execute(query, queryParams);
         res.status(200).json(records);
     } catch (error) {
         console.error('Error fetching records from Chiller:', error);
