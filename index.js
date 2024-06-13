@@ -108,15 +108,24 @@ app.get('/users/emails', async (req, res) => { // Use async function for route h
 
 // Get all records from Air_Blower
 app.get('/api/air-blower', async (req, res) => {
+    const machineName = req.query.machine_name;
+    let query = 'SELECT * FROM Air_Blower';
+    const queryParams = [];
+
+    if (machineName) {
+        query += ' WHERE machine_name = ?';
+        queryParams.push(machineName);
+    }
+
     try {
-        const query = 'SELECT * FROM Air_Blower';
-        const [records] = await promisePool.execute(query);
+        const [records] = await promisePool.execute(query, queryParams);
         res.status(200).json(records);
     } catch (error) {
-        console.error('Error fetching records:', error);
-        res.status(500).json({ error: 'Error fetching records' });
+        console.error('Error fetching records from Air_Blower:', error);
+        res.status(500).json({ error: 'Error fetching records from Air_Blower' });
     }
 });
+
 
 // Add a new record to Air_Blower
 app.post('/api/air-blower', async (req, res) => {
@@ -149,16 +158,27 @@ app.put('/api/air-blower/:id', async (req, res) => {
 
 // Utility function to create routes
 const createRoutesForTable = (tableName) => {
-    app.get(`/api/${tableName}`, async (req, res) => {
+    // Dynamic endpoint to fetch records from any table
+    app.get('/api/:tableName', async (req, res) => {
+        const tableName = req.params.tableName;
+        const machineName = req.query.machine_name;
+        let query = `SELECT * FROM ${tableName}`;
+        const queryParams = [];
+
+        if (machineName) {
+            query += ' WHERE machine_name = ?';
+            queryParams.push(machineName);
+        }
+
         try {
-            const query = `SELECT * FROM ${tableName}`;
-            const [records] = await promisePool.execute(query);
+            const [records] = await promisePool.execute(query, queryParams);
             res.status(200).json(records);
         } catch (error) {
             console.error(`Error fetching records from ${tableName}:`, error);
             res.status(500).json({ error: `Error fetching records from ${tableName}` });
         }
     });
+
 
     app.post(`/api/${tableName}`, async (req, res) => {
         const { machine_name, record_date, record_time, status, A1, A2, A3, T, note } = req.body;
@@ -190,15 +210,24 @@ const createRoutesForTable = (tableName) => {
 
 // Get all records from Fine_Screen
 app.get('/api/fine_screen', async (req, res) => {
+    const machineName = req.query.machine_name;
+    let query = 'SELECT * FROM Fine_Screen';
+    const queryParams = [];
+
+    if (machineName) {
+        query += ' WHERE machine_name = ?';
+        queryParams.push(machineName);
+    }
+
     try {
-        const query = 'SELECT * FROM Fine_Screen';
-        const [records] = await promisePool.execute(query);
+        const [records] = await promisePool.execute(query, queryParams);
         res.status(200).json(records);
     } catch (error) {
         console.error('Error fetching records from Fine_Screen:', error);
         res.status(500).json({ error: 'Error fetching records from Fine_Screen' });
     }
 });
+
 
 // Add a new record to Fine_Screen
 app.post('/api/fine_screen', async (req, res) => {
@@ -231,15 +260,24 @@ app.put('/api/fine_screen/:id', async (req, res) => {
 
 // Get all records from inlet_gate
 app.get('/api/inlet_gate', async (req, res) => {
+    const machineName = req.query.machine_name;
+    let query = 'SELECT * FROM inlet_gate';
+    const queryParams = [];
+
+    if (machineName) {
+        query += ' WHERE machine_name = ?';
+        queryParams.push(machineName);
+    }
+
     try {
-        const query = 'SELECT * FROM inlet_gate';
-        const [records] = await promisePool.execute(query);
+        const [records] = await promisePool.execute(query, queryParams);
         res.status(200).json(records);
     } catch (error) {
         console.error('Error fetching records from inlet_gate:', error);
         res.status(500).json({ error: 'Error fetching records from inlet_gate' });
     }
 });
+
 
 // Add a new record to inlet_gate
 app.post('/api/inlet_gate', async (req, res) => {
@@ -272,15 +310,24 @@ app.put('/api/inlet_gate/:id', async (req, res) => {
 
 // Get all records from Coarse_Screen
 app.get('/api/coarse_screen', async (req, res) => {
+    const machineName = req.query.machine_name;
+    let query = 'SELECT * FROM Coarse_Screen';
+    const queryParams = [];
+
+    if (machineName) {
+        query += ' WHERE machine_name = ?';
+        queryParams.push(machineName);
+    }
+
     try {
-        const query = 'SELECT * FROM Coarse_Screen';
-        const [records] = await promisePool.execute(query);
+        const [records] = await promisePool.execute(query, queryParams);
         res.status(200).json(records);
     } catch (error) {
         console.error('Error fetching records from Coarse_Screen:', error);
         res.status(500).json({ error: 'Error fetching records from Coarse_Screen' });
     }
 });
+
 
 // Add a new record to Coarse_Screen
 app.post('/api/coarse_screen', async (req, res) => {
@@ -313,15 +360,24 @@ app.put('/api/coarse_screen/:id', async (req, res) => {
 
 // Get all records from Water_Pump
 app.get('/api/water_pump', async (req, res) => {
+    const machineName = req.query.machine_name;
+    let query = 'SELECT * FROM Water_Pump';
+    const queryParams = [];
+
+    if (machineName) {
+        query += ' WHERE machine_name = ?';
+        queryParams.push(machineName);
+    }
+
     try {
-        const query = 'SELECT * FROM Water_Pump';
-        const [records] = await promisePool.execute(query);
+        const [records] = await promisePool.execute(query, queryParams);
         res.status(200).json(records);
     } catch (error) {
         console.error('Error fetching records from Water_Pump:', error);
         res.status(500).json({ error: 'Error fetching records from Water_Pump' });
     }
 });
+
 
 // Add a new record to Water_Pump
 app.post('/api/water_pump', async (req, res) => {
@@ -354,15 +410,24 @@ app.put('/api/water_pump/:id', async (req, res) => {
 
 // Get all records from Auto_Sampler
 app.get('/api/auto_sampler', async (req, res) => {
+    const machineName = req.query.machine_name;
+    let query = 'SELECT * FROM Auto_Sampler';
+    const queryParams = [];
+
+    if (machineName) {
+        query += ' WHERE machine_name = ?';
+        queryParams.push(machineName);
+    }
+
     try {
-        const query = 'SELECT * FROM Auto_Sampler';
-        const [records] = await promisePool.execute(query);
+        const [records] = await promisePool.execute(query, queryParams);
         res.status(200).json(records);
     } catch (error) {
         console.error('Error fetching records from Auto_Sampler:', error);
-        res.status(500).json({ error: 'Error fetching records from Auto_Sample' });
+        res.status(500).json({ error: 'Error fetching records from Auto_Sampler' });
     }
 });
+
 
 // Add a new record to Auto_Sampler
 app.post('/api/auto_sampler', async (req, res) => {
@@ -395,15 +460,24 @@ app.put('/api/auto_sampler/:id', async (req, res) => {
 
 // Get all records from Air_Flow
 app.get('/api/air_flow', async (req, res) => {
+    const machineName = req.query.machine_name;
+    let query = 'SELECT * FROM Air_Flow';
+    const queryParams = [];
+
+    if (machineName) {
+        query += ' WHERE machine_name = ?';
+        queryParams.push(machineName);
+    }
+
     try {
-        const query = 'SELECT * FROM Air_Flow';
-        const [records] = await promisePool.execute(query);
+        const [records] = await promisePool.execute(query, queryParams);
         res.status(200).json(records);
     } catch (error) {
         console.error('Error fetching records from Air_Flow:', error);
         res.status(500).json({ error: 'Error fetching records from Air_Flow' });
     }
 });
+
 
 // Add a new record to Air_Flow
 app.post('/api/air_flow', async (req, res) => {
@@ -436,15 +510,24 @@ app.put('/api/air_flow/:id', async (req, res) => {
 
 // Get all records from Biofilter
 app.get('/api/biofilter', async (req, res) => {
+    const machineName = req.query.machine_name;
+    let query = 'SELECT * FROM Biofilter';
+    const queryParams = [];
+
+    if (machineName) {
+        query += ' WHERE machine_name = ?';
+        queryParams.push(machineName);
+    }
+
     try {
-        const query = 'SELECT * FROM Biofilter';
-        const [records] = await promisePool.execute(query);
+        const [records] = await promisePool.execute(query, queryParams);
         res.status(200).json(records);
     } catch (error) {
         console.error('Error fetching records from Biofilter:', error);
         res.status(500).json({ error: 'Error fetching records from Biofilter' });
     }
 });
+
 
 // Add a new record to Biofilter
 app.post('/api/biofilter', async (req, res) => {
@@ -475,17 +558,26 @@ app.put('/api/biofilter/:id', async (req, res) => {
     }
 });
 
-// Get all records from Garden_Pump
+/// Get all records from Garden_Pump
 app.get('/api/garden_pump', async (req, res) => {
+    const machineName = req.query.machine_name;
+    let query = 'SELECT * FROM Garden_Pump';
+    const queryParams = [];
+
+    if (machineName) {
+        query += ' WHERE machine_name = ?';
+        queryParams.push(machineName);
+    }
+
     try {
-        const query = 'SELECT * FROM Garden_Pump';
-        const [records] = await promisePool.execute(query);
+        const [records] = await promisePool.execute(query, queryParams);
         res.status(200).json(records);
     } catch (error) {
         console.error('Error fetching records from Garden_Pump:', error);
         res.status(500).json({ error: 'Error fetching records from Garden_Pump' });
     }
 });
+
 
 // Add a new record to Garden_Pump
 app.post('/api/garden_pump', async (req, res) => {
@@ -568,15 +660,24 @@ app.put('/api/chiller/:id', async (req, res) => {
 
 // Get all records from Vortex_Grit
 app.get('/api/vortex_grit', async (req, res) => {
+    const machineName = req.query.machine_name;
+    let query = 'SELECT * FROM Vortex_Grit';
+    const queryParams = [];
+
+    if (machineName) {
+        query += ' WHERE machine_name = ?';
+        queryParams.push(machineName);
+    }
+
     try {
-        const query = 'SELECT * FROM Vortex_Grit';
-        const [records] = await promisePool.execute(query);
+        const [records] = await promisePool.execute(query, queryParams);
         res.status(200).json(records);
     } catch (error) {
         console.error('Error fetching records from Vortex_Grit:', error);
         res.status(500).json({ error: 'Error fetching records from Vortex_Grit' });
     }
 });
+
 
 // Add a new record to Vortex_Grit
 app.post('/api/vortex_grit', async (req, res) => {
@@ -609,15 +710,24 @@ app.put('/api/vortex_grit/:id', async (req, res) => {
 
 // Get all records from Clarifier table
 app.get('/api/clarifier', async (req, res) => {
+    const machineName = req.query.machine_name;
+    let query = 'SELECT * FROM Clarifier';
+    const queryParams = [];
+
+    if (machineName) {
+        query += ' WHERE machine_name = ?';
+        queryParams.push(machineName);
+    }
+
     try {
-        const query = 'SELECT * FROM Clarifier';
-        const [rows] = await promisePool.execute(query);
+        const [rows] = await promisePool.execute(query, queryParams);
         res.status(200).json(rows);
     } catch (error) {
         console.error('Error fetching clarifier records:', error);
         res.status(500).json({ error: 'Error fetching clarifier records' });
     }
 });
+
 
 // Add a new record to Clarifier table
 app.post('/api/clarifier', async (req, res) => {
