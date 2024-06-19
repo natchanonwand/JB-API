@@ -260,13 +260,23 @@ app.put('/api/fine_screen/:id', async (req, res) => {
 
 // Get all records from inlet_gate
 app.get('/api/inlet_gate', async (req, res) => {
-    const machineName = req.query.machine_name;
-    let query = 'SELECT * FROM inlet_gate';
+    const { machine_name, record_date, record_time } = req.query;
+    let query = 'SELECT * FROM inlet_gate WHERE 1=1';
     const queryParams = [];
 
-    if (machineName) {
-        query += ' WHERE machine_name = ?';
-        queryParams.push(machineName);
+    if (machine_name) {
+        query += ' AND machine_name = ?';
+        queryParams.push(machine_name);
+    }
+
+    if (record_date) {
+        query += ' AND DATE(record_date) = ?';
+        queryParams.push(record_date);
+    }
+
+    if (record_time) {
+        query += ' AND record_time = ?';
+        queryParams.push(record_time);
     }
 
     try {
@@ -277,6 +287,7 @@ app.get('/api/inlet_gate', async (req, res) => {
         res.status(500).json({ error: 'Error fetching records from inlet_gate' });
     }
 });
+
 
 
 // Add a new record to inlet_gate
