@@ -164,22 +164,27 @@ const createRoutesForTable = (tableName) => {
         const { machine_name, record_date, record_time } = req.query;
         let query = `SELECT * FROM ${tableName} WHERE 1=1`;
         const queryParams = [];
-    
+      
         if (machine_name) {
             query += ' AND machine_name = ?';
             queryParams.push(machine_name);
         }
-    
+      
         if (record_date) {
             query += ' AND DATE(record_date) = ?';
             queryParams.push(record_date);
         }
-    
+      
         if (record_time) {
             query += ' AND record_time = ?';
             queryParams.push(record_time);
         }
-    
+      
+        // Order by record_time in descending order to get the latest record first
+        query += ' ORDER BY record_time DESC';
+        // Limit the result to 1 record
+        query += ' LIMIT 1';
+      
         try {
             const [records] = await promisePool.execute(query, queryParams);
             res.status(200).json(records);
@@ -190,6 +195,7 @@ const createRoutesForTable = (tableName) => {
     });
     
     
+
     app.post(`/api/${tableName}`, async (req, res) => {
         const { machine_name, record_date, record_time, status, A1, A2, A3, T, note } = req.body;
 
@@ -289,6 +295,11 @@ app.get('/api/inlet_gate', async (req, res) => {
         queryParams.push(record_time);
     }
 
+    // Order by record_time in descending order to get the latest record first
+    query += ' ORDER BY record_time DESC';
+    // Limit the result to 1 record
+    query += ' LIMIT 1';
+
     try {
         const [records] = await promisePool.execute(query, queryParams);
         res.status(200).json(records);
@@ -349,6 +360,11 @@ app.get('/api/coarse_screen', async (req, res) => {
         query += ' AND record_time = ?';
         queryParams.push(record_time);
     }
+
+    // Order by record_time in descending order to get the latest record first
+    query += ' ORDER BY record_time DESC';
+    // Limit the result to 1 record
+    query += ' LIMIT 1';
 
     try {
         const [records] = await promisePool.execute(query, queryParams);
