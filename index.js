@@ -189,8 +189,7 @@ const createRoutesForTable = (tableName) => {
         }
     });
     
-
-
+    
     app.post(`/api/${tableName}`, async (req, res) => {
         const { machine_name, record_date, record_time, status, A1, A2, A3, T, note } = req.body;
 
