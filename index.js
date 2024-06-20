@@ -353,7 +353,11 @@ app.get('/api/coarse_screen', async (req, res) => {
 
 // Add a new record to Coarse_Screen
 app.post('/api/coarse_screen', async (req, res) => {
-    const { machine_name, record_date, record_time, status, T1, T2, note } = req.body;
+    let { machine_name, record_date, record_time, status, T1, T2, note } = req.body;
+
+    // Round T1 and T2 to 2 decimal places
+    T1 = parseFloat(T1).toFixed(2);
+    T2 = parseFloat(T2).toFixed(2);
 
     try {
         const query = 'INSERT INTO Coarse_Screen (machine_name, record_date, record_time, status, T1, T2, note) VALUES (?, ?, ?, ?, ?, ?, ?)';
