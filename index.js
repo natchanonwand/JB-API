@@ -321,13 +321,23 @@ app.put('/api/inlet_gate/:id', async (req, res) => {
 
 // Get all records from Coarse_Screen
 app.get('/api/coarse_screen', async (req, res) => {
-    const machineName = req.query.machine_name;
-    let query = 'SELECT * FROM Coarse_Screen';
+    const { machine_name, record_date, record_time } = req.query;
+    let query = 'SELECT * FROM Coarse_Screen WHERE 1=1';
     const queryParams = [];
 
-    if (machineName) {
-        query += ' WHERE machine_name = ?';
-        queryParams.push(machineName);
+    if (machine_name) {
+        query += ' AND machine_name = ?';
+        queryParams.push(machine_name);
+    }
+
+    if (record_date) {
+        query += ' AND DATE(record_date) = ?';
+        queryParams.push(record_date);
+    }
+
+    if (record_time) {
+        query += ' AND record_time = ?';
+        queryParams.push(record_time);
     }
 
     try {
@@ -338,6 +348,7 @@ app.get('/api/coarse_screen', async (req, res) => {
         res.status(500).json({ error: 'Error fetching records from Coarse_Screen' });
     }
 });
+
 
 
 // Add a new record to Coarse_Screen
