@@ -342,7 +342,15 @@ app.get('/api/coarse_screen', async (req, res) => {
 
     try {
         const [records] = await promisePool.execute(query, queryParams);
-        res.status(200).json(records);
+
+        // Round T1 and T2 to two decimal places
+        const roundedRecords = records.map(record => ({
+            ...record,
+            T1: record.T1 ? parseFloat(record.T1).toFixed(2) : null,
+            T2: record.T2 ? parseFloat(record.T2).toFixed(2) : null
+        }));
+
+        res.status(200).json(roundedRecords);
     } catch (error) {
         console.error('Error fetching records from Coarse_Screen:', error);
         res.status(500).json({ error: 'Error fetching records from Coarse_Screen' });
