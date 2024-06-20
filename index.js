@@ -161,15 +161,25 @@ const createRoutesForTable = (tableName) => {
     // Dynamic endpoint to fetch records from any table
     app.get('/api/:tableName', async (req, res) => {
         const tableName = req.params.tableName;
-        const machineName = req.query.machine_name;
-        let query = `SELECT * FROM ${tableName}`;
+        const { machine_name, record_date, record_time } = req.query;
+        let query = `SELECT * FROM ${tableName} WHERE 1=1`;
         const queryParams = [];
-
-        if (machineName) {
-            query += ' WHERE machine_name = ?';
-            queryParams.push(machineName);
+    
+        if (machine_name) {
+            query += ' AND machine_name = ?';
+            queryParams.push(machine_name);
         }
-
+    
+        if (record_date) {
+            query += ' AND DATE(record_date) = ?';
+            queryParams.push(record_date);
+        }
+    
+        if (record_time) {
+            query += ' AND record_time = ?';
+            queryParams.push(record_time);
+        }
+    
         try {
             const [records] = await promisePool.execute(query, queryParams);
             res.status(200).json(records);
@@ -178,6 +188,7 @@ const createRoutesForTable = (tableName) => {
             res.status(500).json({ error: `Error fetching records from ${tableName}` });
         }
     });
+    
 
 
     app.post(`/api/${tableName}`, async (req, res) => {
