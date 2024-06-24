@@ -158,41 +158,42 @@ app.put('/api/air-blower/:id', async (req, res) => {
 
 // Utility function to create routes
 const createRoutesForTable = (tableName) => {
-    // Dynamic endpoint to fetch records from any table
-    app.get('/api/:tableName', async (req, res) => {
-        const tableName = req.params.tableName;
-        const { machine_name, record_date, record_time } = req.query;
-        let query = `SELECT * FROM ${tableName} WHERE 1=1`;
-        const queryParams = [];
-      
-        if (machine_name) {
-            query += ' AND machine_name = ?';
-            queryParams.push(machine_name);
-        }
-      
-        if (record_date) {
-            query += ' AND DATE(record_date) = ?';
-            queryParams.push(record_date);
-        }
-      
-        if (record_time) {
-            query += ' AND record_time = ?';
-            queryParams.push(record_time);
-        }
-      
-        // Order by record_time in descending order to get the latest record first
-        query += ' ORDER BY record_time DESC';
-        // Limit the result to 1 record
-        query += ' LIMIT 1';
-      
-        try {
-            const [records] = await promisePool.execute(query, queryParams);
-            res.status(200).json(records);
-        } catch (error) {
-            console.error(`Error fetching records from ${tableName}:`, error);
-            res.status(500).json({ error: `Error fetching records from ${tableName}` });
-        }
-    });
+    // Dynamic endpoint to fetch the latest record from any table based on max record_id
+app.get('/api/:tableName', async (req, res) => {
+    const tableName = req.params.tableName;
+    const { machine_name, record_date, record_time } = req.query;
+    let query = `SELECT * FROM ${tableName} WHERE 1=1`;
+    const queryParams = [];
+
+    if (machine_name) {
+        query += ' AND machine_name = ?';
+        queryParams.push(machine_name);
+    }
+
+    if (record_date) {
+        query += ' AND DATE(record_date) = ?';
+        queryParams.push(record_date);
+    }
+
+    if (record_time) {
+        query += ' AND record_time = ?';
+        queryParams.push(record_time);
+    }
+
+    // Order by record_id in descending order to get the latest record first
+    query += ' ORDER BY record_id DESC';
+    // Limit the result to 1 record
+    query += ' LIMIT 1';
+
+    try {
+        const [records] = await promisePool.execute(query, queryParams);
+        res.status(200).json(records);
+    } catch (error) {
+        console.error(`Error fetching records from ${tableName}:`, error);
+        res.status(500).json({ error: `Error fetching records from ${tableName}` });
+    }
+});
+
     
     
 
@@ -274,7 +275,7 @@ app.put('/api/fine_screen/:id', async (req, res) => {
     }
 });
 
-// Get all records from inlet_gate
+// Get the latest record from inlet_gate based on max record_id
 app.get('/api/inlet_gate', async (req, res) => {
     const { machine_name, record_date, record_time } = req.query;
     let query = 'SELECT * FROM inlet_gate WHERE 1=1';
@@ -295,8 +296,8 @@ app.get('/api/inlet_gate', async (req, res) => {
         queryParams.push(record_time);
     }
 
-    // Order by record_time in descending order to get the latest record first
-    query += ' ORDER BY record_time DESC';
+    // Order by record_id in descending order to get the latest record first
+    query += ' ORDER BY record_id DESC';
     // Limit the result to 1 record
     query += ' LIMIT 1';
 
@@ -308,6 +309,7 @@ app.get('/api/inlet_gate', async (req, res) => {
         res.status(500).json({ error: 'Error fetching records from inlet_gate' });
     }
 });
+
 
 
 
@@ -340,7 +342,7 @@ app.put('/api/inlet_gate/:id', async (req, res) => {
     }
 });
 
-// Get all records from Coarse_Screen
+// Get the latest record from Coarse_Screen based on max record_id
 app.get('/api/coarse_screen', async (req, res) => {
     const { machine_name, record_date, record_time } = req.query;
     let query = 'SELECT * FROM Coarse_Screen WHERE 1=1';
@@ -361,8 +363,8 @@ app.get('/api/coarse_screen', async (req, res) => {
         queryParams.push(record_time);
     }
 
-    // Order by record_time in descending order to get the latest record first
-    query += ' ORDER BY record_time DESC';
+    // Order by record_id in descending order to get the latest record first
+    query += ' ORDER BY record_id DESC';
     // Limit the result to 1 record
     query += ' LIMIT 1';
 
@@ -382,6 +384,7 @@ app.get('/api/coarse_screen', async (req, res) => {
         res.status(500).json({ error: 'Error fetching records from Coarse_Screen' });
     }
 });
+
 
 
 
