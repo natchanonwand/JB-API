@@ -181,7 +181,7 @@ const createRoutesForTable = (tableName) => {
         }
       
         // Order by record_time in descending order to get the latest record first
-        query += ' ORDER BY record_time ASC';
+        query += ' ORDER BY record_time DESC';
         // Limit the result to 1 record
         query += ' LIMIT 1';
       
@@ -296,7 +296,7 @@ app.get('/api/inlet_gate', async (req, res) => {
     }
 
     // Order by record_time in descending order to get the latest record first
-    query += ' ORDER BY record_time ASC';
+    query += ' ORDER BY record_time DESC';
     // Limit the result to 1 record
     query += ' LIMIT 1';
 
@@ -362,7 +362,7 @@ app.get('/api/coarse_screen', async (req, res) => {
     }
 
     // Order by record_time in descending order to get the latest record first
-    query += ' ORDER BY record_time ASC';
+    query += ' ORDER BY record_time DESC';
     // Limit the result to 1 record
     query += ' LIMIT 1';
 
