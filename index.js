@@ -773,23 +773,47 @@ app.put('/api/vortex_grit/:id', async (req, res) => {
 
 // Get all records from Clarifier table
 app.get('/api/clarifier', async (req, res) => {
-    const machineName = req.query.machine_name;
-    let query = 'SELECT * FROM Clarifier';
+    const { machine_name, record_date, record_time } = req.query;
+    let query = 'SELECT * FROM Clarifier WHERE 1=1';
     const queryParams = [];
 
-    if (machineName) {
-        query += ' WHERE machine_name = ?';
-        queryParams.push(machineName);
+    if (machine_name) {
+        query += ' AND machine_name = ?';
+        queryParams.push(machine_name);
     }
 
+    if (record_date) {
+        query += ' AND DATE(record_date) = ?';
+        queryParams.push(record_date);
+    }
+
+    if (record_time) {
+        query += ' AND record_time = ?';
+        queryParams.push(record_time);
+    }
+
+    // Order by record_id in descending order to get the latest record first
+    query += ' ORDER BY record_id DESC';
+    // Limit the result to 1 record
+    query += ' LIMIT 1';
+
     try {
-        const [rows] = await promisePool.execute(query, queryParams);
-        res.status(200).json(rows);
+        const [records] = await promisePool.execute(query, queryParams);
+
+        // Round T1 and T2 to two decimal places
+        const roundedRecords = records.map(record => ({
+            ...record,
+            T1: record.T1 ? parseFloat(record.T1).toFixed(2) : null,
+            T2: record.T2 ? parseFloat(record.T2).toFixed(2) : null
+        }));
+
+        res.status(200).json(roundedRecords);
     } catch (error) {
         console.error('Error fetching clarifier records:', error);
         res.status(500).json({ error: 'Error fetching clarifier records' });
     }
 });
+
 
 
 // Add a new record to Clarifier table
