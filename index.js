@@ -207,10 +207,12 @@ app.get('/api/:tableName', async (req, res) => {
         queryParams.push(record_time);
     }
 
-    // Order by record_id in descending order to get the latest record first
-    query += ' ORDER BY record_id DESC';
-    // Limit the result to 1 record
-    query += ' LIMIT 1';
+    if (machine_name && record_date && record_time) {
+        // Order by record_id in descending order to get the latest record first
+        query += ' ORDER BY record_id DESC';
+        // Limit the result to 1 record
+        query += ' LIMIT 1';
+    }
 
     try {
         const [records] = await promisePool.execute(query, queryParams);
