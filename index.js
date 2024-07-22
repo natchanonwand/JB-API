@@ -844,10 +844,11 @@ app.get('/api/chiller', async (req, res) => {
         queryParams.push(record_time);
     }
 
-    // Order by record_id in descending order to get the latest record first
-    query += ' ORDER BY record_id DESC';
-    // Limit the result to 1 record
-    query += ' LIMIT 1';
+    // Only order by record_id and limit to 1 if both record_date and record_time are provided
+    if (record_date && record_time) {
+        query += ' ORDER BY record_id DESC';
+        query += ' LIMIT 1';
+    }
 
     try {
         const [records] = await promisePool.execute(query, queryParams);
