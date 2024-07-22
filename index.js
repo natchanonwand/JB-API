@@ -253,24 +253,52 @@ app.get('/api/:tableName', async (req, res) => {
 };
 
 // Get all records from Fine_Screen
-app.get('/api/fine_screen', async (req, res) => {
-    const machineName = req.query.machine_name;
-    let query = 'SELECT * FROM Fine_Screen';
+app.get('/api/fine-screen', async (req, res) => {
+    const { machine_name, record_date, record_time } = req.query;
+    let query = 'SELECT * FROM Fine_Screen WHERE 1=1';
     const queryParams = [];
 
-    if (machineName) {
-        query += ' WHERE machine_name = ?';
-        queryParams.push(machineName);
+    if (machine_name) {
+        query += ' AND machine_name = ?';
+        queryParams.push(machine_name);
+    }
+
+    if (record_date) {
+        query += ' AND DATE(record_date) = ?';
+        queryParams.push(record_date);
+    }
+
+    if (record_time) {
+        query += ' AND record_time = ?';
+        queryParams.push(record_time);
+    }
+
+    if (machine_name && record_date && record_time) {
+        // Order by record_id in descending order to get the latest record first
+        query += ' ORDER BY record_id DESC';
+        // Limit the result to 1 record
+        query += ' LIMIT 1';
     }
 
     try {
         const [records] = await promisePool.execute(query, queryParams);
-        res.status(200).json(records);
+
+        // Round specific fields to two decimal places if they exist in the records
+        const roundedRecords = records.map(record => ({
+            ...record,
+            // Add any other fields that you want to round here
+            // Example:
+            // T1: record.T1 ? parseFloat(record.T1).toFixed(2) : null,
+            // T2: record.T2 ? parseFloat(record.T2).toFixed(2) : null
+        }));
+
+        res.status(200).json(roundedRecords);
     } catch (error) {
         console.error('Error fetching records from Fine_Screen:', error);
         res.status(500).json({ error: 'Error fetching records from Fine_Screen' });
     }
 });
+
 
 
 // Add a new record to Fine_Screen
@@ -551,7 +579,7 @@ app.get('/api/auto_sampler', async (req, res) => {
     try {
         const [records] = await promisePool.execute(query, queryParams);
 
-        // Round T1 and T2 to two decimal places
+        // Round T to two decimal places if it exists in the records
         const roundedRecords = records.map(record => ({
             ...record,
             T: record.T ? parseFloat(record.T).toFixed(2) : null
@@ -563,6 +591,7 @@ app.get('/api/auto_sampler', async (req, res) => {
         res.status(500).json({ error: 'Error fetching records from Auto_Sampler' });
     }
 });
+
 
 
 // Add a new record to Auto_Sampler
@@ -646,23 +675,46 @@ app.put('/api/air_flow/:id', async (req, res) => {
 
 // Get all records from Biofilter
 app.get('/api/biofilter', async (req, res) => {
-    const machineName = req.query.machine_name;
-    let query = 'SELECT * FROM Biofilter';
+    const { machine_name, record_date, record_time } = req.query;
+    let query = 'SELECT * FROM Biofilter WHERE 1=1';
     const queryParams = [];
 
-    if (machineName) {
-        query += ' WHERE machine_name = ?';
-        queryParams.push(machineName);
+    if (machine_name) {
+        query += ' AND machine_name = ?';
+        queryParams.push(machine_name);
     }
+
+    if (record_date) {
+        query += ' AND DATE(record_date) = ?';
+        queryParams.push(record_date);
+    }
+
+    if (record_time) {
+        query += ' AND record_time = ?';
+        queryParams.push(record_time);
+    }
+
+    // Order by record_id in descending order to get the latest record first
+    query += ' ORDER BY record_id DESC';
+    // Limit the result to 1 record
+    query += ' LIMIT 1';
 
     try {
         const [records] = await promisePool.execute(query, queryParams);
-        res.status(200).json(records);
+
+        // Round relevant fields to two decimal places if they exist
+        const roundedRecords = records.map(record => ({
+            ...record,
+            T: record.T ? parseFloat(record.T).toFixed(2) : null
+        }));
+
+        res.status(200).json(roundedRecords);
     } catch (error) {
         console.error('Error fetching records from Biofilter:', error);
         res.status(500).json({ error: 'Error fetching records from Biofilter' });
     }
 });
+
 
 
 // Add a new record to Biofilter
@@ -696,23 +748,49 @@ app.put('/api/biofilter/:id', async (req, res) => {
 
 /// Get all records from Garden_Pump
 app.get('/api/garden_pump', async (req, res) => {
-    const machineName = req.query.machine_name;
-    let query = 'SELECT * FROM Garden_Pump';
+    const { machine_name, record_date, record_time } = req.query;
+    let query = 'SELECT * FROM Garden_Pump WHERE 1=1';
     const queryParams = [];
 
-    if (machineName) {
-        query += ' WHERE machine_name = ?';
-        queryParams.push(machineName);
+    if (machine_name) {
+        query += ' AND machine_name = ?';
+        queryParams.push(machine_name);
     }
+
+    if (record_date) {
+        query += ' AND DATE(record_date) = ?';
+        queryParams.push(record_date);
+    }
+
+    if (record_time) {
+        query += ' AND record_time = ?';
+        queryParams.push(record_time);
+    }
+
+    // Order by record_id in descending order to get the latest record first
+    query += ' ORDER BY record_id DESC';
+    // Limit the result to 1 record
+    query += ' LIMIT 1';
 
     try {
         const [records] = await promisePool.execute(query, queryParams);
-        res.status(200).json(records);
+
+        // Round relevant fields to two decimal places if they exist
+        const roundedRecords = records.map(record => ({
+            ...record,
+            // Add any other fields that you want to round here
+            // Example:
+            // T1: record.T1 ? parseFloat(record.T1).toFixed(2) : null,
+            // T2: record.T2 ? parseFloat(record.T2).toFixed(2) : null
+        }));
+
+        res.status(200).json(roundedRecords);
     } catch (error) {
         console.error('Error fetching records from Garden_Pump:', error);
         res.status(500).json({ error: 'Error fetching records from Garden_Pump' });
     }
 });
+
 
 
 // Add a new record to Garden_Pump
@@ -747,23 +825,49 @@ app.put('/api/garden_pump/:id', async (req, res) => {
 
 // Get all records from Chiller
 app.get('/api/chiller', async (req, res) => {
-    const machineName = req.query.machine_name;
-    let query = 'SELECT * FROM Chiller';
+    const { machine_name, record_date, record_time } = req.query;
+    let query = 'SELECT * FROM Chiller WHERE 1=1';
     const queryParams = [];
 
-    if (machineName) {
-        query += ' WHERE machine_name = ?';
-        queryParams.push(machineName);
+    if (machine_name) {
+        query += ' AND machine_name = ?';
+        queryParams.push(machine_name);
     }
+
+    if (record_date) {
+        query += ' AND DATE(record_date) = ?';
+        queryParams.push(record_date);
+    }
+
+    if (record_time) {
+        query += ' AND record_time = ?';
+        queryParams.push(record_time);
+    }
+
+    // Order by record_id in descending order to get the latest record first
+    query += ' ORDER BY record_id DESC';
+    // Limit the result to 1 record
+    query += ' LIMIT 1';
 
     try {
         const [records] = await promisePool.execute(query, queryParams);
-        res.status(200).json(records);
+
+        // Round relevant fields to two decimal places if they exist
+        const roundedRecords = records.map(record => ({
+            ...record,
+            // Add any other fields that you want to round here
+            // Example:
+            // T1: record.T1 ? parseFloat(record.T1).toFixed(2) : null,
+            // T2: record.T2 ? parseFloat(record.T2).toFixed(2) : null
+        }));
+
+        res.status(200).json(roundedRecords);
     } catch (error) {
         console.error('Error fetching records from Chiller:', error);
         res.status(500).json({ error: 'Error fetching records from Chiller' });
     }
 });
+
 
 // Add a new record to Chiller
 app.post('/api/chiller', async (req, res) => {
@@ -796,23 +900,49 @@ app.put('/api/chiller/:id', async (req, res) => {
 
 // Get all records from Vortex_Grit
 app.get('/api/vortex_grit', async (req, res) => {
-    const machineName = req.query.machine_name;
-    let query = 'SELECT * FROM Vortex_Grit';
+    const { machine_name, record_date, record_time } = req.query;
+    let query = 'SELECT * FROM Vortex_Grit WHERE 1=1';
     const queryParams = [];
 
-    if (machineName) {
-        query += ' WHERE machine_name = ?';
-        queryParams.push(machineName);
+    if (machine_name) {
+        query += ' AND machine_name = ?';
+        queryParams.push(machine_name);
     }
+
+    if (record_date) {
+        query += ' AND DATE(record_date) = ?';
+        queryParams.push(record_date);
+    }
+
+    if (record_time) {
+        query += ' AND record_time = ?';
+        queryParams.push(record_time);
+    }
+
+    // Order by record_id in descending order to get the latest record first
+    query += ' ORDER BY record_id DESC';
+    // Limit the result to 1 record
+    query += ' LIMIT 1';
 
     try {
         const [records] = await promisePool.execute(query, queryParams);
-        res.status(200).json(records);
+
+        // Round relevant fields to two decimal places if they exist
+        const roundedRecords = records.map(record => ({
+            ...record,
+            // Add any other fields that you want to round here
+            // Example:
+            // T1: record.T1 ? parseFloat(record.T1).toFixed(2) : null,
+            // T2: record.T2 ? parseFloat(record.T2).toFixed(2) : null
+        }));
+
+        res.status(200).json(roundedRecords);
     } catch (error) {
         console.error('Error fetching records from Vortex_Grit:', error);
         res.status(500).json({ error: 'Error fetching records from Vortex_Grit' });
     }
 });
+
 
 
 // Add a new record to Vortex_Grit
