@@ -1101,15 +1101,18 @@ app.get('/api/recorder', async (req, res) => {
 // Get all records from Recorder table or the latest record based on record_date and record_time
 app.get('/api/recorder', async (req, res) => {
     try {
-        let query = 'SELECT * FROM Recorder';
         const { record_date, record_time } = req.query;
+        let query = 'SELECT * FROM Recorder';
+        const queryParams = [];
 
         if (record_date && record_time) {
-            query += ' ORDER BY record_date DESC, record_time DESC';
+            query += ' WHERE DATE(record_date) = ? AND record_time = ?';
+            queryParams.push(record_date, record_time);
+            query += ' ORDER BY record_id DESC';
             query += ' LIMIT 1';
         }
 
-        const [rows] = await promisePool.execute(query);
+        const [rows] = await promisePool.execute(query, queryParams);
         res.status(200).json(rows);
     } catch (error) {
         console.error('Error fetching recorder records:', error);
