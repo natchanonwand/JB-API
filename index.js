@@ -1115,7 +1115,8 @@ app.get('/api/recorder', async (req, res) => {
     }
 
     if (record_date && record_time) {
-        query += ' ORDER BY record_id DESC LIMIT 1';
+        query += ' ORDER BY record_id DESC';
+        query += ' LIMIT 1';
     }
 
     try {
