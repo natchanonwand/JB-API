@@ -1105,8 +1105,10 @@ app.get('/api/recorder', async (req, res) => {
     const queryParams = [];
 
     if (record_date) {
+        // Extract the date part only (YYYY-MM-DD)
+        const formattedDate = record_date.split('T')[0];
         query += ' AND DATE(record_date) = ?';
-        queryParams.push(record_date);
+        queryParams.push(formattedDate);
     }
 
     if (record_time) {
@@ -1130,6 +1132,7 @@ app.get('/api/recorder', async (req, res) => {
         res.status(500).json({ error: 'Error fetching recorder records' });
     }
 });
+
 
 
 
