@@ -1123,7 +1123,21 @@ app.get('/api/recorder', async (req, res) => {
 });
 
 
+app.post('/api/recorder', async (req, res) => {
+    const { recorder_name, record_date, record_time } = req.body;
 
+    try {
+        const insertQuery = `
+            INSERT INTO Recorder (recorder_name, record_date, record_time)
+            VALUES (?, ?, ?)
+        `;
+        await promisePool.execute(insertQuery, [recorder_name, record_date, record_time]);
+        res.status(201).json({ message: 'Record added successfully' });
+    } catch (error) {
+        console.error('Error adding recorder record:', error);
+        res.status(500).json({ error: 'Error adding recorder record' });
+    }
+});
 
 
 
