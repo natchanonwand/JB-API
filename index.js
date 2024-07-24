@@ -1085,17 +1085,6 @@ app.put('/api/clarifier/:id', async (req, res) => {
     }
 });
 
-// Get all records from Recorder table
-app.get('/api/recorder', async (req, res) => {
-    try {
-        const query = 'SELECT * FROM Recorder';
-        const [rows] = await promisePool.execute(query);
-        res.status(200).json(rows);
-    } catch (error) {
-        console.error('Error fetching recorder records:', error);
-        res.status(500).json({ error: 'Error fetching recorder records' });
-    }
-});
 
 // Add a new record to Recorder table
 // Get all records from Recorder table or the latest record based on record_date and record_time
