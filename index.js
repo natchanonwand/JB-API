@@ -412,7 +412,7 @@ app.put('/api/inlet_gate/:id', async (req, res) => {
     }
 });
 
-// Get the latest record from Coarse_Screen based on max record_id
+// Get all records from Coarse_Screen
 app.get('/api/coarse_screen', async (req, res) => {
     const { machine_name, record_date, record_time } = req.query;
     let query = 'SELECT * FROM Coarse_Screen WHERE 1=1';
@@ -433,10 +433,12 @@ app.get('/api/coarse_screen', async (req, res) => {
         queryParams.push(record_time);
     }
 
-    // Order by record_id in descending order to get the latest record first
-    query += ' ORDER BY record_id DESC';
-    // Limit the result to 1 record
-    query += ' LIMIT 1';
+    if (machine_name && record_date && record_time) {
+        // Order by record_id in descending order to get the latest record first
+        query += ' ORDER BY record_id DESC';
+        // Limit the result to 1 record
+        query += ' LIMIT 1';
+    }
 
     try {
         const [records] = await promisePool.execute(query, queryParams);
@@ -454,6 +456,7 @@ app.get('/api/coarse_screen', async (req, res) => {
         res.status(500).json({ error: 'Error fetching records from Coarse_Screen' });
     }
 });
+
 
 
 
